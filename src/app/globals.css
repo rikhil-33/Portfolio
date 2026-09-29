@@ -1,1 +1,232 @@
 @import "tailwindcss";
+
+/* ─── Keyframes must be at root level, NOT inside @theme ─── */
+@keyframes meteor {
+  0% {
+    transform: translateY(-20%) translateX(-50%);
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(300%) translateX(-50%);
+    opacity: 0;
+  }
+}
+
+/* ─── Tailwind v4 theme tokens ─── */
+@theme {
+  /* animate-meteor utility class will be auto-generated from this */
+  --animate-meteor: meteor var(--duration, 7s) var(--delay, 0s) ease-in-out infinite;
+
+  /* ── GridPulse colour tokens ── */
+  /* foreground = white text on the dark indigo background */
+  --color-foreground: 255 255 255;
+  /* background = the deep indigo-950 used in the beam */
+  --color-background: 30 27 75;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    height: 100%;
+  }
+
+  body {
+    height: 100%;
+    margin: 0;
+    background-color: #1e1b4b; /* indigo-950 fallback if CSS fails */
+  }
+}
+
+/* ─────────────────────────────────────────
+   Navbar – liquid glass notch
+───────────────────────────────────────── */
+
+.navbar-capsule {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+
+  display: inline-flex;
+  align-items: center;
+
+  padding: 14px 8px 10px 20px;
+  border-radius: 0 0 24px 24px;
+
+  background: transparent;
+  white-space: nowrap;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+}
+
+/* Glass blur + inset shadow layer */
+.navbar-glass-bg {
+  display: block;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+
+  backdrop-filter: blur(20px) saturate(180%) brightness(0.55);
+  -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(0.55);
+
+  box-shadow:
+    inset  3px  3px 0.5px -3px   rgba(255,255,255,0.12),
+    inset -3px -3px 0.5px -3px   rgba(255,255,255,0.08),
+    inset  1px  1px   1px -0.5px rgba(255,255,255,0.20),
+    inset -1px -1px   1px -0.5px rgba(255,255,255,0.10),
+    inset  0    0    6px  6px    rgba(255,255,255,0.04),
+    inset  0    0    2px  2px    rgba(255,255,255,0.06),
+          0    4px  24px        rgba(0,0,0,0.40);
+
+  border: 1px solid rgba(255,255,255,0.14);
+  border-top: none;
+}
+
+/* SVG distortion layer */
+.navbar-glass-distort {
+  display: block;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.navbar-logo {
+  position: relative;
+  z-index: 10;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+  padding-right: 4px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+}
+
+.navbar-links {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0 8px;
+}
+
+.navbar-link {
+  position: relative;
+  display: inline-block;
+  padding: 6px 13px;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.90);
+  text-decoration: none;
+  transition: color 0.18s ease;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+}
+
+.navbar-link:hover { color: #ffffff; }
+
+.navbar-link::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 50%;
+  height: 1px;
+  background: rgba(255,255,255,0.55);
+  transform-origin: center;
+  transition: transform 0.22s ease;
+}
+
+.navbar-link:hover::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.navbar-cta {
+  position: relative;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 7px 20px;
+  border-radius: 9999px;
+
+  background-color: #ffffff;
+  color: #111111;
+
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.18s ease;
+}
+
+.navbar-cta:hover { background-color: #e0e0e0; }
+
+/* ─────────────────────────────────────────
+   Frosted depth — blends into background
+   No card shape. No border. No shadow.
+───────────────────────────────────────── */
+
+/* Outer wrap — position context only */
+.liquid-glass-wrap {
+  position: relative;
+}
+
+/* Invisible frosted layer — same indigo as the page, just blurred */
+.liquid-glass-pane {
+  display: block;
+  position: absolute;
+  /* Flush with the text container — no extra area */
+  inset: 0;
+
+  /* Tint = same dark indigo as body, more translucent */
+  background: radial-gradient(
+    ellipse 100% 100% at 40% 50%,
+    rgba(30, 27, 75, 0.18)  0%,
+    rgba(30, 27, 75, 0.17) 15%,
+    rgba(30, 27, 75, 0.14) 30%,
+    rgba(30, 27, 75, 0.10) 50%,
+    rgba(30, 27, 75, 0.05) 70%,
+    rgba(30, 27, 75, 0.02) 85%,
+    rgba(30, 27, 75, 0.00) 100%
+  );
+
+  backdrop-filter: blur(4px) saturate(110%);
+  -webkit-backdrop-filter: blur(4px) saturate(110%);
+
+  /* No border, no shadow, no shape */
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+
+  pointer-events: none;
+  z-index: 0;
+}
+
+.liquid-glass-pane::before,
+.liquid-glass-pane::after {
+  display: none;
+}
+
+/* Text floats above the frosted depth */
+.liquid-glass-content {
+  position: relative;
+  z-index: 1;
+  padding: 48px 52px 52px;
+}
